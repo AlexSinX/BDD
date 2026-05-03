@@ -28,4 +28,4 @@ jobs:
         run: java -jar ./artifacts/app-ibank-build-for-testers.jar -P:profile=test &
 
       - name: Run tests
-        run: ./gradlew test -Dselenide.headless=true
+        run: ./gradlew test -Dselenide.headless=true --info

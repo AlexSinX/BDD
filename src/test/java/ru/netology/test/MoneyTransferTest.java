@@ -41,11 +41,23 @@ public class MoneyTransferTest {
 
     @Test
     void shouldFindBugWhenTransferMoreThanBalance() {
-        int balanceSecondBefore = dashboardPage.getCardBalance(1);
-        int amount = balanceSecondBefore + 6500;
+        // Запоминаем балансы обеих карт до перевода
+        int balanceFirstBefore = dashboardPage.getCardBalance(0); // карта-отправитель
+        int balanceSecondBefore = dashboardPage.getCardBalance(1); // карта-получатель
+
+        // Пытаемся перевести сумму, превышающую баланс карты-отправителя
+        int amount = balanceFirstBefore + 7500;
         var transferPage = dashboardPage.selectCardToTransfer(0);
         transferPage.makeTransfer(String.valueOf(amount), DataHelper.getSecondCardInfo());
+
+        // Получаем балансы после операции
+        int balanceFirstAfter = dashboardPage.getCardBalance(0);
         int balanceSecondAfter = dashboardPage.getCardBalance(1);
-        assertEquals(balanceSecondBefore, balanceSecondAfter, "Баланс карты списания не должен меняться при превышении лимита");
+
+        // При превышении лимита ни один баланс не должен измениться
+        assertEquals(balanceFirstBefore, balanceFirstAfter,
+                "Баланс карты-отправителя не должен меняться при попытке перевода больше доступной суммы");
+        assertEquals(balanceSecondBefore, balanceSecondAfter,
+                "Баланс карты-получателя не должен меняться при попытке перевода больше доступной суммы");
     }
 }
